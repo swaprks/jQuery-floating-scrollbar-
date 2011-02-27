@@ -1,0 +1,10 @@
+/*
+ * jQuery Floating Scrollbar - v0.1pre - 02/27/2011
+ * http://benalman.com/
+ * 
+ * Copyright (c) 2011 "Cowboy" Ben Alman
+ * Dual licensed under the MIT and GPL licenses.
+ * http://benalman.com/about/license/
+ */
+
+(function(a){function i(){e=null,d.each(function(){var c=a(this),d=c.offset().top,f=d+c.height(),g=b.scrollTop()+b.height(),h=30;if(d+h<g&&f>g){e=c;return!1}});if(!e)h();else{var c=e.scrollLeft(),i=e.scrollLeft(90019001).scrollLeft(),j=e.width(),k=j+i;e.scrollLeft(c);if(k<=j){h();return}h(!0),f.css({left:e.offset().left,width:j}).scrollLeft(c),g.width(k)}}function h(a){f.toggle(!!a)}var b=a(this),c=a("html"),d=a([]),e,f=a("<div><div/></div>"),g=f.children();f.hide().css({position:"fixed",bottom:0,height:"30px",overflowX:"auto",overflowY:"hidden"}).scroll(function(){e&&e.scrollLeft(f.scrollLeft())}),g.css({border:"1px solid #fff",opacity:.01}),a.fn.floatingScrollbar=function(a){a===!1?(d=d.not(this),d.length||(f.detach(),b.unbind("resize scroll",i))):this.length&&(d.length||(f.appendTo("body"),b.resize(i).scroll(i)),d=d.add(this)),i();return this},a.floatingScrollbarUpdate=i})(jQuery)
