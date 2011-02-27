@@ -1,5 +1,5 @@
 /*!
- * jQuery Floating Scrollbar - v0.1pre - 02/27/2011
+ * jQuery Floating Scrollbar - v0.2 - 02/27/2011
  * http://benalman.com/
  * 
  * Copyright (c) 2011 "Cowboy" Ben Alman
@@ -18,8 +18,11 @@
       // The current element.
       current,
 
+      // The previous current element.
+      previous,
+
       // Create the floating scrollbar.
-      scroller = $('<div><div/></div>'),
+      scroller = $('<div id="floating-scrollbar"><div/></div>'),
       scrollerInner = scroller.children();
 
   // Initialize the floating scrollbar.
@@ -48,6 +51,8 @@
     if ( state === false ) {
       // Remove these elements from the list.
       elems = elems.not(this);
+      // Stop monitoring elements for scroll.
+      this.unbind('scroll', scrollCurrent);
       if ( !elems.length ) {
         // No elements remain, so detach scroller and unbind events.
         scroller.detach();
@@ -79,9 +84,14 @@
     scroller.toggle(!!state);
   }
 
+  function scrollCurrent() {
+    scroller.scrollLeft(current.scrollLeft())
+  }
+
   // This is called on window scroll or resize, or when elements are added or
   // removed from the internal elems list.
   function update() {
+    previous = current;
     current = null;
 
     // Find the first element whose content is visible, but whose bottom is
@@ -105,7 +115,7 @@
     // Test to see if the current element has a scrollbar.
     var scroll = current.scrollLeft(),
         scrollMax = current.scrollLeft(90019001).scrollLeft(),
-        widthOuter = current.width(),
+        widthOuter = current.innerWidth(),
         widthInner = widthOuter + scrollMax;
 
     current.scrollLeft(scroll);
@@ -125,6 +135,12 @@
       .scrollLeft(scroll);
 
     scrollerInner.width(widthInner);
+
+    // Sync floating scrollbar if element content is scrolled.
+    if ( current !== previous ) {
+      previous.unbind('scroll', scrollCurrent);
+      current.scroll(scrollCurrent);
+    }
   }
 
 })(jQuery);
