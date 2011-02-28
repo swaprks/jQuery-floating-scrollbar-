@@ -1,5 +1,5 @@
 /*!
- * jQuery Floating Scrollbar - v0.3 - 02/27/2011
+ * jQuery Floating Scrollbar - v0.4 - 02/28/2011
  * http://benalman.com/
  * 
  * Copyright (c) 2011 "Cowboy" Ben Alman
@@ -61,9 +61,7 @@
     } else if ( this.length ) {
       // Don't assume the set is non-empty!
       if ( !elems.length ) {
-        // Adding elements for the first time, so attach scroller and bind
-        // events.
-        scroller.appendTo('body');
+        // Adding elements for the first time, so bind events.
         win.resize(update).scroll(update);
       }
       // Add these elements to the list.
@@ -127,21 +125,21 @@
     // Show the floating scrollbar.
     setState(true);
 
+    // Sync floating scrollbar if element content is scrolled.
+    if ( !previous || previous[0] !== current[0] ) {
+      previous && previous.unbind('scroll', scrollCurrent);
+      current.scroll(scrollCurrent).after(scroller);
+    }
+
     // Adjust the floating scrollbar as-necessary.
     scroller
       .css({
-        left: current.offset().left,
+        left: current.offset().left - win.scrollLeft(),
         width: widthOuter
       })
       .scrollLeft(scroll);
 
     scrollerInner.width(widthInner);
-
-    // Sync floating scrollbar if element content is scrolled.
-    if ( current !== previous ) {
-      previous && previous.unbind('scroll', scrollCurrent);
-      current.scroll(scrollCurrent);
-    }
   }
 
 })(jQuery);
