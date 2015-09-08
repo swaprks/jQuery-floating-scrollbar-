@@ -1,5 +1,5 @@
 /*!
- * jQuery Floating Scrollbar - v0.4 - 02/28/2011
+ * jQuery Floating Scrollbar - v0.3 - 02/27/2011
  * http://benalman.com/
  * 
  * Copyright (c) 2011 "Cowboy" Ben Alman
@@ -39,7 +39,7 @@
       // If there's a current element, set its scroll appropriately.
       current && current.scrollLeft(scroller.scrollLeft())
     });
-
+    
   scrollerInner.css({
     border: '1px solid #fff',
     opacity: 0.01
@@ -61,7 +61,9 @@
     } else if ( this.length ) {
       // Don't assume the set is non-empty!
       if ( !elems.length ) {
-        // Adding elements for the first time, so bind events.
+        // Adding elements for the first time, so attach scroller and bind
+        // events.
+        scroller.appendTo('body');
         win.resize(update).scroll(update);
       }
       // Add these elements to the list.
@@ -112,34 +114,31 @@
     if ( !current ) { setState(); return; }
 
     // Test to see if the current element has a scrollbar.
-    var scroll = current.scrollLeft(),
-        scrollMax = current.scrollLeft(90019001).scrollLeft(),
-        widthOuter = current.innerWidth(),
-        widthInner = widthOuter + scrollMax;
-
+    var scroll = current.scrollLeft();
+    
+    var scrollbarWidth = jQuery(current[0]).find("table")[0].clientWidth - current[0].clientWidth;
     current.scrollLeft(scroll);
 
     // Abort if the element doesn't have a scrollbar.
-    if ( widthInner <= widthOuter ) { setState(); return; }
+    if ( scrollbarWidth <= 0 ) { setState(); return; }
 
     // Show the floating scrollbar.
     setState(true);
-
-    // Sync floating scrollbar if element content is scrolled.
-    if ( !previous || previous[0] !== current[0] ) {
-      previous && previous.unbind('scroll', scrollCurrent);
-      current.scroll(scrollCurrent).after(scroller);
-    }
-
+    
     // Adjust the floating scrollbar as-necessary.
     scroller
       .css({
-        left: current.offset().left - win.scrollLeft(),
-        width: widthOuter
-      })
-      .scrollLeft(scroll);
+        left: current.offset().left,
+        width: current[0].clientWidth
+      }).scrollLeft(scroll);
+    
+    scrollerInner.width(current[0].offsetWidth + scrollbarWidth);
 
-    scrollerInner.width(widthInner);
+    // Sync floating scrollbar if element content is scrolled.
+    if ( current !== previous ) {
+      previous && previous.unbind('scroll', scrollCurrent);
+      current.scroll(scrollCurrent);
+    }
   }
 
 })(jQuery);
